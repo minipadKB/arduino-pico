@@ -15,7 +15,7 @@
 	url = https://github.com/earlephilhower/ESP8266SdFat.git
 [submodule "libraries/Keyboard"]
 	path = libraries/Keyboard
-	url = https://github.com/earlephilhower/Keyboard
+	url = https://github.com/minipadKB/Keyboard
 [submodule "libraries/Mouse"]
 	path = libraries/Mouse
 	url = https://github.com/earlephilhower/Mouse
