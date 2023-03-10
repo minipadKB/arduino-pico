@@ -78,6 +78,10 @@ static int __usb_task_irq;
 #define USBD_MSC_EPIN 0x84
 #define USBD_MSC_EPSIZE 64
 
+#ifndef HID_POLLING_RATE
+#define HID_POLLING_RATE 100
+#endif
+
 #define TUD_RPI_RESET_DESCRIPTOR(_itfnum, _stridx) \
   /* Interface */\
   9, TUSB_DESC_INTERFACE, _itfnum, 0, 0, TUSB_CLASS_VENDOR_SPECIFIC, RESET_INTERFACE_SUBCLASS, RESET_INTERFACE_PROTOCOL, _stridx,
@@ -249,7 +253,7 @@ void __SetupUSBDescriptor() {
         uint8_t hid_itf = __USBInstallSerial ? 2 : 0;
         uint8_t hid_desc[TUD_HID_DESC_LEN] = {
             // Interface number, string index, protocol, report descriptor len, EP In & Out address, size & polling interval
-            TUD_HID_DESCRIPTOR(hid_itf, 0, HID_ITF_PROTOCOL_NONE, hid_report_len, EPNUM_HID, CFG_TUD_HID_EP_BUFSIZE, 10)
+            TUD_HID_DESCRIPTOR(hid_itf, 0, HID_ITF_PROTOCOL_NONE, hid_report_len, EPNUM_HID, CFG_TUD_HID_EP_BUFSIZE, 1000 / HID_POLLING_RATE)
         };
 
         uint8_t msd_itf = interface_count - 1;
