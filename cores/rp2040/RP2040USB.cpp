@@ -314,8 +314,8 @@ const uint16_t *tud_descriptor_string_cb(uint8_t index, uint16_t langid) {
 
     static const char *const usbd_desc_str[] = {
         [USBD_STR_0] = "",
-        [USBD_STR_MANUF] = "Raspberry Pi",
-        [USBD_STR_PRODUCT] = "PicoArduino",
+        [USBD_STR_MANUF] = "Project Minipad",
+        [USBD_STR_PRODUCT] = "minipad",
         [USBD_STR_SERIAL] = idString,
         [USBD_STR_CDC] = "Board CDC",
 #ifdef ENABLE_PICOTOOL_USB
