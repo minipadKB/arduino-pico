@@ -163,7 +163,7 @@ void __SetupDescHIDReport() {
     //allocate memory for the HID report descriptors. We don't use them, but need the size here.
     uint8_t desc_hid_report_mouse[] = { TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(1)) };
     uint8_t desc_hid_report_joystick[] = { TUD_HID_REPORT_DESC_GAMEPAD(HID_REPORT_ID(1)) };
-    uint8_t desc_hid_report_keyboard[] = { TUD_HID_REPORT_DESC_KEYBOARD(HID_REPORT_ID(1)) };
+    uint8_t desc_hid_report_keyboard[] = { TUD_HID_REPORT_DESC_KEYBOARD(HID_REPORT_ID(1)), TUD_HID_REPORT_DESC_CONSUMER(HID_REPORT_ID(2)) };
     int size = 0;
 
     //accumulate the size of all used HID report descriptors
@@ -200,7 +200,7 @@ void __SetupDescHIDReport() {
         if (__USBInstallMouse) {
             //determine if we need an offset (USB keyboard is installed)
             if (__USBInstallKeyboard) {
-                uint8_t desc_local[] = { TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(2)) };
+                uint8_t desc_local[] = { TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(3)) };
                 memcpy(__hid_report + sizeof(desc_hid_report_keyboard), desc_local, sizeof(desc_local));
             } else {
                 memcpy(__hid_report, desc_hid_report_mouse, sizeof(desc_hid_report_mouse));
@@ -212,7 +212,7 @@ void __SetupDescHIDReport() {
             uint8_t reportid = 1;
             int offset = 0;
             if (__USBInstallKeyboard) {
-                reportid++;
+                reportid += 2;
                 offset += sizeof(desc_hid_report_keyboard);
             }
             if (__USBInstallMouse) {
@@ -307,15 +307,15 @@ void __SetupUSBDescriptor() {
 
 const uint16_t *tud_descriptor_string_cb(uint8_t index, uint16_t langid) {
     (void) langid;
-#define DESC_STR_MAX (20)
+#define DESC_STR_MAX (32)
     static uint16_t desc_str[DESC_STR_MAX];
 
     static char idString[PICO_UNIQUE_BOARD_ID_SIZE_BYTES * 2 + 1];
 
     static const char *const usbd_desc_str[] = {
         [USBD_STR_0] = "",
-        [USBD_STR_MANUF] = "Project Minipad",
-        [USBD_STR_PRODUCT] = "minipad",
+        [USBD_STR_MANUF] = USB_MANUFACTURER,
+        [USBD_STR_PRODUCT] = USB_PRODUCT,
         [USBD_STR_SERIAL] = idString,
         [USBD_STR_CDC] = "Board CDC",
 #ifdef ENABLE_PICOTOOL_USB
@@ -389,6 +389,7 @@ void __USBStart() {
 // Invoked when received GET_REPORT control request
 // Application must fill buffer report's content and return its length.
 // Return zero will cause the stack to STALL request
+extern "C" uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen) __attribute__((weak));
 extern "C" uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen) {
     // TODO not implemented
     (void) instance;
@@ -402,6 +403,7 @@ extern "C" uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, h
 
 // Invoked when received SET_REPORT control request or
 // received data on OUT endpoint ( Report ID = 0, Type = 0 )
+extern "C" void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize) __attribute__((weak));
 extern "C" void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize) {
     // TODO set LED based on CAPLOCK, NUMLOCK etc...
     (void) instance;
