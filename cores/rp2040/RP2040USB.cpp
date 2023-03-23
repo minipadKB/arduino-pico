@@ -109,6 +109,7 @@ const uint8_t *tud_descriptor_device_cb(void) {
         return (const uint8_t *)&usbd_desc_device;
     }
     // Need a multi-endpoint config which will require changing the PID to help Windows not barf
+#ifndef IGNORE_MULTI_ENDPOINT_PID_MUTATION
     if (__USBInstallKeyboard) {
         usbd_desc_device.idProduct |= 0x8000;
     }
@@ -121,6 +122,7 @@ const uint8_t *tud_descriptor_device_cb(void) {
     if (__USBInstallMassStorage) {
         usbd_desc_device.idProduct ^= 0x2000;
     }
+#endif
     // Set the device class to 0 to indicate multiple device classes
     usbd_desc_device.bDeviceClass = 0;
     usbd_desc_device.bDeviceSubClass = 0;
