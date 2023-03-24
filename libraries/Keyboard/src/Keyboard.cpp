@@ -37,7 +37,7 @@ Keyboard_::Keyboard_(void) {
     // Base class clears the members we care about
 }
 
-void Keyboard_::sendReport(KeyReport* keys) {
+void Keyboard_::sendReport_(KeyReport* keys) {
     CoreMutex m(&__usb_mutex);
     tud_task();
     if (tud_hid_ready()) {
